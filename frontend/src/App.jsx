@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 
-const App = () =>{
-
+const App = () => {
   const [formData, setFormData] = useState({
     Animal_Type: "",
     Symptom_1: "",
@@ -19,9 +18,11 @@ const App = () =>{
 
   // Image states
   const [image, setImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null); // 🌟 NAYA: Image dikhane ke liye
   const [imageResult, setImageResult] = useState("");
+  const [confidence, setConfidence] = useState("");   // 🌟 NAYA: AI kitna sure hai
+  const [loading, setLoading] = useState(false);      // 🌟 NAYA: Loading effect
 
-  // 🌟 NAYA CODE: Tab ka title change karne ke liye
   useEffect(() => {
     document.title = "🐾 Animal Disease Predictor";
   }, []);
@@ -36,63 +37,60 @@ const App = () =>{
       .catch(err => console.log(err));
   }, []);
 
-  // Handle form input
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Submit symptom prediction
   const handleSubmit = async () => {
-
     if (!formData.Animal_Type || !formData.Symptom_1) {
       alert("Please select required fields!");
       return;
     }
-
     try {
       const res = await axios.post("http://localhost:5000/predict", formData);
       setResult(res.data.prediction);
-      
-      // 🌟 EXTRA TIP: Agar aap chahte hain ki prediction aane ke baad title update ho jaye
       document.title = `Prediction: ${res.data.prediction} 🐾`;
-
     } catch (error) {
       console.error(error);
       alert("Error connecting to backend");
     }
   };
 
-  // Handle image selection
+  // Handle image selection aur Preview set karna
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]);
+    const file = e.target.files[0];
+    setImage(file);
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file)); // Image preview generate karna
+    } else {
+      setPreviewUrl(null);
+    }
   };
 
   // Upload image
   const handleImageUpload = async () => {
-
     if (!image) {
       alert("Please select an image!");
       return;
     }
 
+    setLoading(true); // Loading chalu
+    setImageResult(""); // Purana result hatana
+    setConfidence("");
+
     const imgData = new FormData();
     imgData.append("file", image);
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/predict-image",
-        imgData
-      );
-
+      const res = await axios.post("http://localhost:5000/predict-image", imgData);
       setImageResult(res.data.image_prediction);
-      
-      // 🌟 EXTRA TIP: Image prediction ke baad bhi title update kar sakte hain
+      setConfidence(res.data.confidence); // Confidence score set karna
       document.title = `Image Result: ${res.data.image_prediction} 📸`;
-
     } catch (error) {
       console.error(error);
       alert("Image upload failed");
     }
+    setLoading(false); // Loading band
   };
 
   return (
@@ -100,41 +98,31 @@ const App = () =>{
       <div className="card">
         <h2>🐾 Animal Disease Predictor</h2>
 
-        {/* Animal Dropdown */}
+        {/* --- Tabular Data Section --- */}
         <select name="Animal_Type" onChange={handleChange}>
           <option value="">Select Animal</option>
-          {animals.map((a, i) => (
-            <option key={i} value={a}>{a}</option>
-          ))}
+          {animals.map((a, i) => <option key={i} value={a}>{a}</option>)}
         </select>
 
-        {/* Symptoms */}
         <select name="Symptom_1" onChange={handleChange}>
           <option value="">Select Symptom 1</option>
-          {symptoms.map((s, i) => (
-            <option key={i} value={s}>{s}</option>
-          ))}
+          {symptoms.map((s, i) => <option key={i} value={s}>{s}</option>)}
         </select>
 
         <select name="Symptom_2" onChange={handleChange}>
           <option value="">Select Symptom 2</option>
-          {symptoms.map((s, i) => (
-            <option key={i} value={s}>{s}</option>
-          ))}
+          {symptoms.map((s, i) => <option key={i} value={s}>{s}</option>)}
         </select>
 
-        {/* Yes/No */}
         <select name="Appetite_Loss" onChange={handleChange}>
           <option value="">Appetite Loss?</option>
           <option value="Yes">Yes</option>
           <option value="No">No</option>
         </select>
 
-        {/* Inputs */}
         <input name="Age" placeholder="Age (days)" onChange={handleChange} />
         <input name="Weight" placeholder="Weight" onChange={handleChange} />
 
-        {/* Predict Button */}
         <button onClick={handleSubmit}>Predict Disease</button>
 
         {result && (
@@ -143,20 +131,32 @@ const App = () =>{
           </div>
         )}
 
-        <hr />
+        <hr style={{ margin: "20px 0" }} />
 
-        {/* IMAGE SECTION */}
+        {/* --- IMAGE SECTION --- */}
         <h3>📸 Upload Animal Image</h3>
 
-        <input type="file" onChange={handleImageChange} />
+        <input type="file" accept="image/*" onChange={handleImageChange} />
 
-        <button onClick={handleImageUpload}>
-          Predict from Image
+        {/* Image Preview Box */}
+        {previewUrl && (
+          <div style={{ marginTop: "10px", marginBottom: "10px" }}>
+            <img 
+              src={previewUrl} 
+              alt="Preview" 
+              style={{ width: "100%", maxHeight: "200px", objectFit: "cover", borderRadius: "8px", border: "1px solid #ccc" }} 
+            />
+          </div>
+        )}
+
+        <button onClick={handleImageUpload} disabled={loading} style={{ background: loading ? "#9e9e9e" : "#4CAF50" }}>
+          {loading ? "Predicting... ⏳" : "Predict from Image"}
         </button>
 
         {imageResult && (
-          <div className="result">
-            <h3>Image Prediction: {imageResult}</h3>
+          <div className="result" style={{ backgroundColor: "#e3f2fd" }}>
+            <h3 style={{ margin: "5px 0" }}>Prediction: {imageResult}</h3>
+            <p style={{ margin: "5px 0", color: "#555" }}>Confidence: <strong>{confidence}</strong></p>
           </div>
         )}
 
