@@ -1,92 +1,336 @@
-.App {
+/* --- Global & Layout --- */
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f4f7f6;
+  color: #333;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 20px 0;
+}
+
+.app-header h1 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 2.5rem;
+}
+
+.app-header p {
+  color: #7f8c8d;
+  margin-top: 5px;
+  font-size: 1.1rem;
+}
+
+.main-content {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+/* --- Cards --- */
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 30px;
+}
+
+.input-panel {
+  flex: 1;
+  min-width: 350px;
+}
+
+.result-panel {
+  flex: 1.2;
+  min-width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Tabs --- */
+.tabs {
+  display: flex;
+  margin-bottom: 25px;
+  border-bottom: 2px solid #eee;
+}
+
+.tab {
+  flex: 1;
+  padding: 12px;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #95a5a6;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab.active {
+  color: #3498db;
+  border-bottom: 3px solid #3498db;
+}
+
+.tab:hover:not(.active) {
+  color: #2c3e50;
+}
+
+/* --- Form Layout --- */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Make Primary Symptom & Animal Type take full width if needed */
+.input-group:nth-child(1), .input-group:nth-child(3) {
+  grid-column: span 2;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+select, input[type="number"] {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fafafa;
+  transition: border 0.3s;
+}
+
+select:focus, input:focus {
+  outline: none;
+  border-color: #3498db;
+  background-color: #fff;
+}
+
+/* --- Buttons --- */
+.primary-btn {
+  grid-column: span 2;
+  padding: 14px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.1s;
+  margin-top: 10px;
+}
+
+.primary-btn:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.primary-btn:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+}
+
+/* --- Image Upload Section --- */
+.image-upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.upload-box {
+  width: 100%;
+  border: 2px dashed #bdc3c7;
+  padding: 50px 20px;
+  border-radius: 12px;
+  background: #fdfdfd;
+  margin-bottom: 20px;
+  cursor: pointer;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.upload-box input[type="file"] {
+  font-size: 1rem;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.file-name {
+  margin-top: 15px;
+  color: #27ae60;
+  font-weight: bold;
+}
+
+/* --- Result Panel Styles --- */
+.empty-state {
+  text-align: center;
+  color: #7f8c8d;
+  padding: 50px 20px;
+  background: white;
+  border-radius: 12px;
+  border: 1px dashed #ccc;
+}
+
+.report-card {
+  border-left: 5px solid #e74c3c;
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.report-header h2 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.severity-badge {
+  background: #ffebee;
+  color: #c62828;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+
+.disease-highlight {
+  background: #f8f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.disease-highlight h3 {
+  margin: 0 0 10px 0;
+  color: #e74c3c;
+  font-size: 2rem;
+}
+
+.disease-highlight p {
+  margin: 0;
+  color: #555;
+}
+
+.report-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.detail-section h4 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.detail-section ul {
+  padding-left: 20px;
+  color: #444;
+  line-height: 1.6;
+}
+
+.disclaimer {
+  margin-top: 30px;
+  padding: 15px;
+  background: #fff3cd;
+  color: #856404;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* --- Loading Spinner --- */
+.loading-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  padding: 50px;
+  color: #7f8c8d;
 }
 
-.App-link {
-  color: #61dafb;
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Responsive Layout --- */
+@media (max-width: 768px) {
+  .main-content {
+    flex-direction: column;
   }
-  to {
-    transform: rotate(360deg);
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .input-group:nth-child(1), .input-group:nth-child(3) {
+    grid-column: span 1;
+  }
+  .primary-btn {
+    grid-column: span 1;
+  }
+  .report-details {
+    grid-template-columns: 1fr;
   }
 }
-body {
-  margin: 0;
-  font-family: Arial;
-  background: linear-gradient(to right, #74ebd5, #acb6e5);
-}
-
-.container {
+/* --- Image Preview Styles --- */
+.preview-container {
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  margin-bottom: 10px;
 }
 
-.card {
-  background: white;
-  padding: 30px;
-  border-radius: 15px;
-  width: 350px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  text-align: center;
-}
-
-h2 {
-  margin-bottom: 20px;
-}
-
-select, input {
-  width: 100%;
-  margin: 10px 0;
-  padding: 10px;
+.image-preview {
+  max-width: 100%;
+  max-height: 250px;
+  object-fit: cover;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  border: 2px solid #3498db;
 }
 
-button {
-  width: 100%;
-  padding: 10px;
-  border: none;
-  background: #4CAF50;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-button:hover {
-  background: #45a049;
-}
-
-.result {
-  margin-top: 20px;
-  padding: 10px;
-  background: #e8f5e9;
-  border-radius: 10px;
+/* Updated upload box slightly for better image fitting */
+.upload-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
